@@ -1,12 +1,12 @@
 <p align="center">
-  <a href="https://discord.gg/QJnVGFT59N" target="blank"><img src="https://raw.githubusercontent.com/jurienhamaker/Koto/main/koto%20sticker.png" width="200" alt="Muse logo" /></a>
+  <a href="https://discord.gg/UttZbEd9zn" target="blank"><img src="https://raw.githubusercontent.com/jurienhamaker/Koto/main/koto%20sticker.png" width="200" alt="Muse logo" /></a>
 </p>
 
   <p align="center">A wordle on <a href="http://discord.com" target="_blank">Discord</a> bot.</p>
     <p align="center">
       <img src="https://img.shields.io/github/license/jurrienhamaker/koto" alt="Package License" />
       <img src="https://img.shields.io/github/actions/workflow/status/jurienhamaker/koto/koto.yml" alt="CircleCI" />
-      <a href="https://discord.gg/QJnVGFT59N" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+      <a href="https://discord.gg/UttZbEd9zn" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
     </p>
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
