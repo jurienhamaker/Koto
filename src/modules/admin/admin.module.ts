@@ -4,6 +4,7 @@ import { GameModule } from '../game/game.module';
 import { WordsModule } from '../words/words.module';
 import { AdminEmojisCommands } from './commands/emojis.commands';
 import { AdminRecreateCommands } from './commands/recreate.commands';
+import { AdminSendWelcomeCommands } from './commands/send-welcome.commands';
 
 @Module({
 	imports: [SharedModule, WordsModule, GameModule],
@@ -11,6 +12,7 @@ import { AdminRecreateCommands } from './commands/recreate.commands';
 		// commands
 		AdminEmojisCommands,
 		AdminRecreateCommands,
+		AdminSendWelcomeCommands,
 	],
 })
 export class AdminModule {}

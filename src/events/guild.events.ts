@@ -10,7 +10,9 @@ export class GuildEvents {
 	constructor(private _client: Client) {}
 
 	@On(Events.GuildCreate)
-	public onGuildCreate(@Context() [guild]: ContextOf<Events.GuildCreate>) {
+	public async onGuildCreate(
+		@Context() [guild]: ContextOf<Events.GuildCreate>,
+	) {
 		this._logger.log(`Joined a new guild ${guild.name}`);
 
 		const channel = guild.channels.cache.find(
@@ -26,7 +28,7 @@ export class GuildEvents {
 				`Sending welcome message to ${channel.id} in ${guild.id}`,
 			);
 
-			sendWelcomeMessage(channel, this._client);
+			await sendWelcomeMessage(channel, this._client);
 		}
 	}
 

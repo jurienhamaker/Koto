@@ -24,7 +24,7 @@ export const sendWelcomeMessage = async (channel: Channel, _client: Client) => {
 		.setColor(EMBED_COLOR)
 		.setFooter(footer);
 
-	await channel.send({
+	return channel.send({
 		embeds: [embed],
 		components: [
 			new ActionRowBuilder<ButtonBuilder>().addComponents(
