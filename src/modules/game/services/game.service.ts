@@ -26,7 +26,7 @@ export class GameService {
 	async start(guildId: string, recreate = false, word = null) {
 		this._logger.log(`Trying to start a game for ${guildId}`);
 
-		const currentGame = await this._getCurrentGame(guildId);
+		const currentGame = await this.getCurrentGame(guildId);
 
 		if (currentGame && !recreate) {
 			return;
@@ -78,7 +78,7 @@ export class GameService {
 		message: Message,
 		settings: Settings,
 	) {
-		let game = await this._getCurrentGame(guildId);
+		let game = await this.getCurrentGame(guildId);
 		await this._points.getPlayer(guildId, message.author.id);
 
 		if (!game) {
@@ -172,9 +172,7 @@ export class GameService {
 		return this._message.create(game, false);
 	}
 
-	private _getCurrentGame(
-		guildId: string,
-	): Promise<Game & { guesses: Guess[] }> {
+	getCurrentGame(guildId: string): Promise<Game & { guesses: Guess[] }> {
 		return this._prisma.game.findFirst({
 			where: {
 				guildId,
