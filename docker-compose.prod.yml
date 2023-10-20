@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+    koto:
+        image: ghcr.io/jurienhamaker/koto:main
+        restart: unless-stopped
+        tty: true
+        command: yarn docker:start
+        env_file: ./.env
+        ports:
+            - '$EXPOSED_API_PORT:3000'
+        depends_on:
+            - db
+    db:
+        image: postgres:12.2
+        environment:
+            - 'POSTGRES_USER=$DATABASE_USER'
+            - 'POSTGRES_PASSWORD=$DATABASE_PASSWORD'
+            - 'POSTGRES_DB=$DATABASE_NAME'
+        ports:
+            - '$EXPOSED_DATABASE_PORT:5432'
