@@ -23,7 +23,7 @@ export class AppEvents {
 		client.user!.setPresence({
 			activities: [
 				{
-					name: 'wordle 🖊️',
+					name: 'Koto 🖊️',
 					type: ActivityType.Playing,
 				},
 			],

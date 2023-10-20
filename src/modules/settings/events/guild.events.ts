@@ -12,6 +12,12 @@ export class SettingsGuildEvents {
 	@On(Events.GuildCreate)
 	public onGuildCreate(@Context() [guild]: ContextOf<Events.GuildCreate>) {
 		this._logger.log('Checking settings for guild join event');
-		this._settings.checkSettings(guild.id);
+		this._settings.getSettings(guild.id);
+	}
+
+	@On(Events.GuildDelete)
+	public onGuildDelete(@Context() [guild]: ContextOf<Events.GuildDelete>) {
+		this._logger.log('Deletting settings for guild delete event');
+		this._settings.delete(guild.id);
 	}
 }

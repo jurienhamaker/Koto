@@ -14,9 +14,12 @@ import { guildMetrics } from './metrics/guild.metrics';
 import { interactionMetrics } from './metrics/interaction.metrics';
 import { userMetrics } from './metrics/user.metrics';
 import { LoggerMiddleware } from './middleware/log.middleware';
-import { DiscordModule } from './modules/discord/discord.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { GameModule } from './modules/game/game.module';
+import { GeneralModule } from './modules/general/general.module';
 import { HealthModule } from './modules/health';
 import { SettingsModule } from './modules/settings';
+import { WordsModule } from './modules/words/words.module';
 import { SharedModule } from './shared.module';
 import { intents } from './util/intents';
 
@@ -27,7 +30,7 @@ import { intents } from './util/intents';
 				process.env.NODE_ENV !== 'production'
 					? process.env.DEVELOPMENT_SERVER_IDS!.split(',')
 					: false,
-			skipRegistration: process.env.REGISTER_COMMANDS === 'false',
+			skipRegistration: process.env.REGISTER_COMMANDS !== 'false',
 			token: process.env.DISCORD_TOKEN!,
 			intents,
 		}),
@@ -52,7 +55,10 @@ import { intents } from './util/intents';
 		SettingsModule,
 		SharedModule,
 		HealthModule,
-		DiscordModule,
+		GeneralModule,
+		WordsModule,
+		GameModule,
+		AdminModule,
 	],
 	providers: [
 		{
