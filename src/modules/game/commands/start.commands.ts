@@ -1,12 +1,12 @@
 import { ForbiddenExceptionFilter } from '@koto/filters';
 import { GuildModeratorGuard } from '@koto/guards';
 import { SettingsService } from '@koto/modules/settings';
+import { noSettingsReply } from '@koto/util/no-settings-reply';
 import { Injectable, UseFilters, UseGuards } from '@nestjs/common';
 import { Client, CommandInteraction } from 'discord.js';
 import { Context, SlashCommandContext, Subcommand } from 'necord';
 import { GameCommandDecorator } from '../game.decorator';
 import { GameService } from '../services/game.service';
-import { noSettingsReply } from '../util/no-settings-reply';
 
 @UseGuards(GuildModeratorGuard)
 @UseFilters(ForbiddenExceptionFilter)

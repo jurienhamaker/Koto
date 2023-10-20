@@ -1,10 +1,10 @@
 import { getEmbedFooter } from '@koto/modules/game/util/get-embed-footer';
+import { supportServerButton } from '@koto/util/buttons';
 import { EMBED_COLOR } from '@koto/util/constants';
 import { Injectable } from '@nestjs/common';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
-	ButtonStyle,
 	Client,
 	EmbedBuilder,
 } from 'discord.js';
@@ -34,10 +34,7 @@ Join our support server with the button below, we'll try to help you out the bes
 			embeds: [embed],
 			components: [
 				new ActionRowBuilder<ButtonBuilder>().addComponents(
-					new ButtonBuilder()
-						.setURL('https://discord.gg/UttZbEd9zn')
-						.setLabel('Join support server 👨‍⚕️')
-						.setStyle(ButtonStyle.Link),
+					supportServerButton,
 				),
 			],
 		});

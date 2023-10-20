@@ -1,8 +1,8 @@
 import { ForbiddenExceptionFilter } from '@koto/filters';
 import { AdminGuard } from '@koto/guards';
-import { noSettingsReply } from '@koto/modules/game/util/no-settings-reply';
 import { SettingsService } from '@koto/modules/settings';
 import { WordsService } from '@koto/modules/words/services/words.service';
+import { noSettingsReply } from '@koto/util/no-settings-reply';
 import { Injectable, UseFilters, UseGuards } from '@nestjs/common';
 import { Client } from 'discord.js';
 import {

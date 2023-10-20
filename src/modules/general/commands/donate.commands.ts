@@ -1,10 +1,10 @@
 import { getEmbedFooter } from '@koto/modules/game/util/get-embed-footer';
+import { kofiButton } from '@koto/util/buttons';
 import { EMBED_COLOR } from '@koto/util/constants';
 import { Injectable } from '@nestjs/common';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,
-	ButtonStyle,
 	Client,
 	EmbedBuilder,
 } from 'discord.js';
@@ -34,12 +34,7 @@ Thanks for playing!`,
 		return interaction.reply({
 			embeds: [embed],
 			components: [
-				new ActionRowBuilder<ButtonBuilder>().addComponents(
-					new ButtonBuilder()
-						.setURL(`https://ko-fi.com/jurienhamaker`)
-						.setLabel('Open Ko-Fi page ☕')
-						.setStyle(ButtonStyle.Link),
-				),
+				new ActionRowBuilder<ButtonBuilder>().addComponents(kofiButton),
 			],
 		});
 	}
