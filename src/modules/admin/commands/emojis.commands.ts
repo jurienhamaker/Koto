@@ -19,7 +19,13 @@ export class AdminEmojisCommands {
 	public async getEmojis(@Context() [interaction]: SlashCommandContext) {
 		const guilds = await this._client.guilds.fetch();
 		const letterGuilds = [
-			...guilds.filter((g) => g.name.startsWith('Koto Letters')).values(),
+			...guilds
+				.filter(
+					(g) =>
+						g.name.startsWith('Koto Letters') &&
+						g.name.endsWith('Rounded'),
+				)
+				.values(),
 		].map((g) => g.id);
 
 		const emojis = this._client.emojis.cache.filter(
