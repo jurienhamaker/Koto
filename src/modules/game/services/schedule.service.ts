@@ -16,8 +16,7 @@ export class GameScheduleService {
 		private _game: GameService,
 	) {}
 
-	// @Cron('0 0 * * * *')
-	@Cron('0 */30 * * * *')
+	@Cron('0 0 * * * *')
 	async check() {
 		const outOfTimeGames = await this._prisma.game.findMany({
 			where: {
