@@ -16,7 +16,7 @@ export class GameScheduleService {
 		private _game: GameService,
 	) {}
 
-	@Cron('0 0 * * * *')
+	@Cron('0 */30 * * * *')
 	async check() {
 		const outOfTimeGames = await this._prisma.game.findMany({
 			where: {
@@ -41,30 +41,44 @@ export class GameScheduleService {
 		const guildsWithChannelId = await this._prisma.settings.findMany({
 			where: {
 				channelId: { not: null },
-				games: {
-					none: {
-						status: GameStatus.IN_PROGRESS,
-					},
-				},
 			},
 			select: {
 				guildId: true,
 			},
 		});
 
-		this._logger.log(`Starting ${guildsWithChannelId.length} games.`);
+		this._logger.log(`Checking ${guildsWithChannelId.length} guilds.`);
 		const promises = [];
 		for (let { guildId } of guildsWithChannelId) {
 			const guild = await this._client.guilds
 				.fetch(guildId)
 				.catch(() => null);
 			if (guild) {
-				promises.push(this._game.start(guildId));
+				promises.push(this._checkGuild(guildId));
 			}
 		}
 
-		await Promise.allSettled(promises);
+		const guildChecks = await Promise.allSettled(promises);
+		const startedGames = guildChecks.filter(
+			(r) => r.status === 'fulfilled' && !!r.value,
+		);
 
-		this._logger.log(`Started ${guildsWithChannelId.length} games.`);
+		this._logger.log(`Started ${startedGames.length} games.`);
+	}
+
+	private async _checkGuild(guildId) {
+		const lastGame = await this._prisma.game.findFirst({
+			where: {
+				guildId,
+				endingAt: { gt: startOfHour(new Date()) },
+			},
+		});
+
+		if (lastGame) {
+			return false;
+		}
+
+		await this._game.start(guildId);
+		return true;
 	}
 }
