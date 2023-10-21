@@ -32,9 +32,12 @@ export class GameScheduleService {
 		this._logger.log(
 			`Checking finished game, ending ${outOfTimeGames.length} games.`,
 		);
+		const endPromises = [];
 		for (let { id } of outOfTimeGames) {
-			this._game.endGame(id);
+			endPromises.push(this._game.endGame(id));
 		}
+		await Promise.allSettled(endPromises);
+		this._logger.log(`Ended ${outOfTimeGames.length} games.`);
 
 		const guildsWithChannelId = await this._prisma.settings.findMany({
 			where: {
@@ -50,13 +53,19 @@ export class GameScheduleService {
 			},
 		});
 
+		this._logger.log(`Starting ${guildsWithChannelId.length} games.`);
+		const promises = [];
 		for (let { guildId } of guildsWithChannelId) {
 			const guild = await this._client.guilds
 				.fetch(guildId)
 				.catch(() => null);
 			if (guild) {
-				this._game.start(guildId);
+				promises.push(this._game.start(guildId));
 			}
 		}
+
+		await Promise.allSettled(promises);
+
+		this._logger.log(`Started ${guildsWithChannelId.length} games.`);
 	}
 }

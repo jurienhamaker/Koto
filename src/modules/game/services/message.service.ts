@@ -2,6 +2,7 @@ import { PrismaService } from '@koto/modules/prisma/services';
 import { SettingsService } from '@koto/modules/settings';
 import { EMOJI_TYPE, getEmoji } from '@koto/util/get-emoji';
 import { getTimestamp } from '@koto/util/get-timestamp';
+import { asciiNumbers } from '@koto/util/numbers';
 import { Injectable, Logger } from '@nestjs/common';
 import { Game, GameStatus, Guess } from '@prisma/client';
 import { startOfHour } from 'date-fns';
@@ -132,7 +133,7 @@ ${this._getGameInformation(game)}`,
 
 		return rows.reduce((str, row, i) => {
 			str +=
-				`${i + 1}. ` +
+				`${asciiNumbers[i + 1]}` +
 				Object.keys(row.meta)
 					.map((key) =>
 						getEmoji(row.meta[key].type, row.meta[key].letter),
