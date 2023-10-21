@@ -6,6 +6,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Game, GameStatus, Guess } from '@prisma/client';
 import { startOfHour } from 'date-fns';
 import { Channel, ChannelType, Client, EmbedBuilder } from 'discord.js';
+import { GameMeta, GameWithMetaAndGuesses } from '../types/meta';
 import { getEmbedFooter } from '../util/get-embed-footer';
 
 @Injectable()
@@ -18,7 +19,7 @@ export class GameMessageService {
 		private _client: Client,
 	) {}
 
-	async create(game: Game & { guesses: Guess[] }, isNew = false) {
+	async create(game: GameWithMetaAndGuesses, isNew = false) {
 		const settings = await this._settings.getSettings(game.guildId);
 
 		if (!settings.channelId) {
@@ -70,7 +71,9 @@ export class GameMessageService {
 		message.delete().catch(() => null);
 	}
 
-	private async _createEmbed(game: Game & { guesses: Guess[] }) {
+	private async _createEmbed(
+		game: Game & { guesses: Guess[]; meta: GameMeta },
+	) {
 		const footer = await getEmbedFooter(this._client);
 		return new EmbedBuilder()
 			.setTitle(
@@ -152,7 +155,7 @@ ${this._getGameInformation(game)}`,
 		}, '');
 	}
 
-	private _getMessageKeyboard(game: Game) {
+	private _getMessageKeyboard(game: GameWithMetaAndGuesses) {
 		const rows = [
 			['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
 			['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', null],
@@ -165,14 +168,18 @@ ${this._getGameInformation(game)}`,
 					.map((l) =>
 						l === null
 							? getEmoji(EMOJI_TYPE.WRONG, 'blank')
-							: getEmoji(game.meta[l] ?? EMOJI_TYPE.DEFAULT, l),
+							: getEmoji(
+									game.meta.keyboard?.[l] ??
+										EMOJI_TYPE.DEFAULT,
+									l,
+							  ),
 					)
 					.join('') + '\n';
 			return str;
 		}, '');
 	}
 
-	private _getGameInformation(game: Game & { guesses: Guess[] }) {
+	private _getGameInformation(game: GameWithMetaAndGuesses) {
 		const footer = `Don't know how to play? Use the /tutorial commands for detailed instructions.${
 			process.env.NODE_ENV !== 'production'
 				? `\nDevelopment mode: **${game.word}**`

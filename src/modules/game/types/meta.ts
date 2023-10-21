@@ -1,4 +1,5 @@
 import { EMOJI_TYPE } from '@koto/util/get-emoji';
+import { Game, Guess } from '@prisma/client';
 
 export interface GameGuessMetaLetter {
 	type: EMOJI_TYPE;
@@ -11,5 +12,13 @@ export interface GameGuessMeta {
 }
 
 export interface GameMeta {
-	[key: string]: EMOJI_TYPE;
+	keyboard: {
+		[key: string]: EMOJI_TYPE;
+	};
+	word: string[];
 }
+
+export type GameWithMeta = Game & { meta: GameMeta };
+export type GameWithMetaAndGuesses = Game & { meta: GameMeta } & {
+	guesses: Guess[];
+};

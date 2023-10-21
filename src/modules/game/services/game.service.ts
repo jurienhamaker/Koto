@@ -7,7 +7,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Game, GameStatus, Guess, Settings } from '@prisma/client';
 import { addHours, addMinutes, startOfHour, subMinutes } from 'date-fns';
 import { Message } from 'discord.js';
-import { GameGuessMeta, GameMeta } from '../types/meta';
+import { GameGuessMeta, GameMeta, GameWithMetaAndGuesses } from '../types/meta';
 import { GameMessageService } from './message.service';
 import { GamePointsService } from './points.service';
 
@@ -62,13 +62,17 @@ export class GameService {
 				guildId,
 				word,
 				endingAt: startOfHour(addHours(new Date(), settings.frequency)),
+				meta: {
+					keyboard: {},
+					word: Array(6).fill(EMOJI_TYPE.WRONG),
+				},
 			},
 			include: {
 				guesses: true,
 			},
 		});
 
-		await this._message.create(game, true);
+		await this._message.create(game as GameWithMetaAndGuesses, true);
 		return true;
 	}
 
@@ -89,7 +93,7 @@ export class GameService {
 			(g) => g.word === word,
 		);
 
-		if (alreadyGuessedIndex >= 0) {
+		if (alreadyGuessedIndex >= 0 && process.env.NODE_ENV === 'production') {
 			await message.react('❌');
 			return;
 		}
@@ -151,7 +155,9 @@ export class GameService {
 			promises.push(this._points.applyPoints(game, message.author.id));
 		}
 
-		promises.push(this._message.create(game, false));
+		promises.push(
+			this._message.create(game as GameWithMetaAndGuesses, false),
+		);
 
 		await Promise.allSettled(promises);
 	}
@@ -169,7 +175,7 @@ export class GameService {
 			},
 		});
 
-		return this._message.create(game, false);
+		return this._message.create(game as GameWithMetaAndGuesses, false);
 	}
 
 	getCurrentGame(guildId: string): Promise<Game & { guesses: Guess[] }> {
@@ -193,10 +199,10 @@ export class GameService {
 	private _checkWord(correct: string, guess: string, gameMeta: GameMeta) {
 		const meta: GameGuessMeta = {};
 
+		const currentWord = [...correct];
+
 		for (let i = 0; i < guess.length; i++) {
 			const guessLetter = guess[i];
-
-			const correctLetter = correct[i];
 
 			const data = {
 				type: EMOJI_TYPE.WRONG,
@@ -204,35 +210,39 @@ export class GameService {
 				letter: guessLetter,
 			};
 
-			const matches = correct.match(new RegExp(guessLetter, 'g')) || [];
-			if (matches.length) {
-				const alreadyMatched =
-					matches.length === 1 &&
-					gameMeta[guessLetter] === EMOJI_TYPE.CORRECT;
-				data.type = alreadyMatched
-					? EMOJI_TYPE.WRONG
-					: EMOJI_TYPE.ALMOST;
-				data.points =
-					gameMeta[guessLetter] === EMOJI_TYPE.CORRECT ||
-					gameMeta[guessLetter] === EMOJI_TYPE.ALMOST ||
-					alreadyMatched
-						? 0
-						: 1;
-			}
-
-			if (guessLetter === correctLetter) {
+			if (guessLetter === currentWord[i]) {
 				data.type = EMOJI_TYPE.CORRECT;
+
 				data.points =
-					gameMeta[guessLetter] === EMOJI_TYPE.CORRECT
+					gameMeta.word[i] === EMOJI_TYPE.CORRECT
 						? 0
-						: gameMeta[guessLetter] === EMOJI_TYPE.ALMOST
+						: gameMeta.keyboard[guessLetter] === EMOJI_TYPE.ALMOST
 						? 1
 						: 2;
+				currentWord[i] = '';
+				gameMeta.word[i] = EMOJI_TYPE.CORRECT;
+			}
+
+			if (
+				data.type !== EMOJI_TYPE.CORRECT &&
+				currentWord.some((char) => char === guessLetter)
+			) {
+				data.type = EMOJI_TYPE.ALMOST;
+				data.points =
+					gameMeta.word[i] !== EMOJI_TYPE.CORRECT &&
+					gameMeta.word[i] !== EMOJI_TYPE.ALMOST
+						? 1
+						: 0;
+				currentWord[currentWord.indexOf(guessLetter)] = '';
+				gameMeta.word[i] =
+					gameMeta.word[i] === EMOJI_TYPE.CORRECT
+						? EMOJI_TYPE.CORRECT
+						: EMOJI_TYPE.ALMOST;
 			}
 
 			meta[i] = data;
-			gameMeta[guessLetter] =
-				gameMeta[guessLetter] === EMOJI_TYPE.CORRECT
+			gameMeta.keyboard[guessLetter] =
+				gameMeta.keyboard[guessLetter] === EMOJI_TYPE.CORRECT
 					? EMOJI_TYPE.CORRECT
 					: data.type;
 		}
@@ -253,6 +263,10 @@ export class GameService {
 		gameId: number,
 		cooldown: number,
 	): Promise<Date | undefined> {
+		if (process.env.NODE_ENV !== 'production') {
+			return;
+		}
+
 		const lastGuessWithinCooldown = await this._prisma.guess.findFirst({
 			where: {
 				userId,
