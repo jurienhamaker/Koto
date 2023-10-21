@@ -1,4 +1,4 @@
-import { getEmbedFooter } from '@koto/modules/game/util/get-embed-footer';
+import { getEmbedFooter } from '@koto/util/get-embed-footer';
 import {
 	ActionRowBuilder,
 	ButtonBuilder,

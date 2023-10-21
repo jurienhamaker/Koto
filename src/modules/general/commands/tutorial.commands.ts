@@ -1,6 +1,6 @@
-import { getEmbedFooter } from '@koto/modules/game/util/get-embed-footer';
 import { SettingsService } from '@koto/modules/settings';
 import { EMBED_COLOR } from '@koto/util/constants';
+import { getEmbedFooter } from '@koto/util/get-embed-footer';
 import { noSettingsReply } from '@koto/util/no-settings-reply';
 import { Injectable } from '@nestjs/common';
 import { Client, EmbedBuilder } from 'discord.js';

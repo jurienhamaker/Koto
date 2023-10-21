@@ -6,8 +6,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Game, GameStatus, Guess } from '@prisma/client';
 import { startOfHour } from 'date-fns';
 import { Channel, ChannelType, Client, EmbedBuilder } from 'discord.js';
+import { getEmbedFooter } from '../../../util/get-embed-footer';
 import { GameMeta, GameWithMetaAndGuesses } from '../types/meta';
-import { getEmbedFooter } from '../util/get-embed-footer';
 
 @Injectable()
 export class GameMessageService {
@@ -212,7 +212,7 @@ ${footer}`;
 ${9 - game.guesses.length} guesses remaining
 Time runs out <t:${getTimestamp(game.endingAt)}:R>
 
-                    ${footer}`;
+${footer}`;
 		}
 	}
 }

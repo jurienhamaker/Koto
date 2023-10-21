@@ -1,5 +1,5 @@
-import { getEmbedFooter } from '@koto/modules/game/util/get-embed-footer';
 import { EMBED_COLOR } from '@koto/util/constants';
+import { getEmbedFooter } from '@koto/util/get-embed-footer';
 import { Injectable } from '@nestjs/common';
 import {
 	ActionRowBuilder,

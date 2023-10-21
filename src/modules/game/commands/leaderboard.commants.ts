@@ -19,8 +19,8 @@ import {
 	SlashCommandContext,
 	StringOption,
 } from 'necord';
+import { getEmbedFooter } from '../../../util/get-embed-footer';
 import { GamePointsService } from '../services/points.service';
-import { getEmbedFooter } from '../util/get-embed-footer';
 
 class GameLeaderboardOptions {
 	@StringOption({
