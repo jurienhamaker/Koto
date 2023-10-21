@@ -1,9 +1,13 @@
-export enum EMOJI_TYPE {
-	CORRECT = 'GREEN',
-	ALMOST = 'YELLOW',
-	WRONG = 'GRAY',
-	DEFAULT = 'WHITE',
-}
+export type EMOJI_COLOR = 'GREEN' | 'YELLOW' | 'GRAY' | 'WHITE';
+
+export const GameTypeEmojiColorMap: {
+	[key: string]: EMOJI_COLOR;
+} = {
+	CORRECT: 'GREEN',
+	ALMOST: 'YELLOW',
+	WRONG: 'GRAY',
+	DEFAULT: 'WHITE',
+};
 
 const data = {
 	GRAY: {
@@ -448,7 +452,7 @@ const data = {
 	},
 };
 
-export const getEmoji = (type: EMOJI_TYPE, letter: string) => {
+export const getEmoji = (type: EMOJI_COLOR, letter: string) => {
 	const letters = data[type];
 	const emoji = letters[letter];
 

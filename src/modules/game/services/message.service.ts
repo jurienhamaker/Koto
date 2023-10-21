@@ -1,6 +1,6 @@
 import { PrismaService } from '@koto/modules/prisma/services';
 import { SettingsService } from '@koto/modules/settings';
-import { EMOJI_TYPE, getEmoji } from '@koto/util/get-emoji';
+import { GameTypeEmojiColorMap, getEmoji } from '@koto/util/get-emoji';
 import { getTimestamp } from '@koto/util/get-timestamp';
 import { asciiNumbers } from '@koto/util/numbers';
 import { Injectable, Logger } from '@nestjs/common';
@@ -8,7 +8,7 @@ import { Game, GameStatus, Guess } from '@prisma/client';
 import { startOfHour } from 'date-fns';
 import { Channel, ChannelType, Client, EmbedBuilder } from 'discord.js';
 import { getEmbedFooter } from '../../../util/get-embed-footer';
-import { GameMeta, GameWithMetaAndGuesses } from '../types/meta';
+import { GAME_TYPE, GameMeta, GameWithMetaAndGuesses } from '../types/meta';
 
 @Injectable()
 export class GameMessageService {
@@ -119,7 +119,7 @@ ${this._getGameInformation(game)}`,
 					meta: Array(6)
 						.fill({
 							letter: 'blank',
-							type: EMOJI_TYPE.DEFAULT,
+							type: GAME_TYPE.DEFAULT,
 						})
 						.reduce((obj, curr, i) => {
 							obj[i] = curr;
@@ -136,7 +136,10 @@ ${this._getGameInformation(game)}`,
 				`${asciiNumbers[i + 1]}` +
 				Object.keys(row.meta)
 					.map((key) =>
-						getEmoji(row.meta[key].type, row.meta[key].letter),
+						getEmoji(
+							GameTypeEmojiColorMap[row.meta[key].type],
+							row.meta[key].letter,
+						),
 					)
 					.join('') +
 				`${
@@ -168,10 +171,11 @@ ${this._getGameInformation(game)}`,
 				row
 					.map((l) =>
 						l === null
-							? getEmoji(EMOJI_TYPE.WRONG, 'blank')
+							? getEmoji('GRAY', 'blank')
 							: getEmoji(
-									game.meta.keyboard?.[l] ??
-										EMOJI_TYPE.DEFAULT,
+									GameTypeEmojiColorMap[
+										game.meta.keyboard?.[l] ?? 'DEFAULT'
+									],
 									l,
 							  ),
 					)

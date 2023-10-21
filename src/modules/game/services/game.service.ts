@@ -1,13 +1,17 @@
 import { PrismaService } from '@koto/modules/prisma/services';
 import { SettingsService } from '@koto/modules/settings';
 import { WordsService } from '@koto/modules/words/services/words.service';
-import { EMOJI_TYPE } from '@koto/util/get-emoji';
 import { getTimestamp } from '@koto/util/get-timestamp';
 import { Injectable, Logger } from '@nestjs/common';
 import { Game, GameStatus, Guess, Settings } from '@prisma/client';
 import { addHours, addMinutes, startOfHour, subMinutes } from 'date-fns';
 import { Message } from 'discord.js';
-import { GameGuessMeta, GameMeta, GameWithMetaAndGuesses } from '../types/meta';
+import {
+	GAME_TYPE,
+	GameGuessMeta,
+	GameMeta,
+	GameWithMetaAndGuesses,
+} from '../types/meta';
 import { GameMessageService } from './message.service';
 import { GamePointsService } from './points.service';
 
@@ -62,10 +66,7 @@ export class GameService {
 				guildId,
 				word,
 				endingAt: startOfHour(addHours(new Date(), settings.frequency)),
-				meta: {
-					keyboard: {},
-					word: Array(6).fill(EMOJI_TYPE.WRONG),
-				},
+				meta: this._createBaseState(word),
 			},
 			include: {
 				guesses: true,
@@ -132,7 +133,7 @@ export class GameService {
 		});
 
 		let status = guessed ? GameStatus.COMPLETED : game.status;
-		if (game.guesses.length + 1 === 9) {
+		if (game.guesses.length + 1 === 9 && !guessed) {
 			status = GameStatus.FAILED;
 		}
 
@@ -196,8 +197,8 @@ export class GameService {
 		});
 	}
 
-	private _checkWord(correct: string, guess: string, gameMeta: GameMeta) {
-		const meta: GameGuessMeta = {};
+	private _checkWord(correct: string, guess: string, state: GameMeta) {
+		const meta: GameGuessMeta[] = [];
 
 		const currentWord = [...correct];
 
@@ -205,51 +206,66 @@ export class GameService {
 			const guessLetter = guess[i];
 
 			const data = {
-				type: EMOJI_TYPE.WRONG,
+				type: GAME_TYPE.WRONG,
 				points: 0,
 				letter: guessLetter,
 			};
 
-			if (guessLetter === currentWord[i]) {
-				data.type = EMOJI_TYPE.CORRECT;
-
-				data.points =
-					gameMeta.word[i] === EMOJI_TYPE.CORRECT
-						? 0
-						: gameMeta.keyboard[guessLetter] === EMOJI_TYPE.ALMOST
-						? 1
-						: 2;
-				currentWord[i] = '';
-				gameMeta.word[i] = EMOJI_TYPE.CORRECT;
+			if (!state.keyboard[guessLetter]) {
+				state.keyboard[guessLetter] = GAME_TYPE.WRONG;
 			}
 
-			if (
-				data.type !== EMOJI_TYPE.CORRECT &&
-				currentWord.some((char) => char === guessLetter)
-			) {
-				data.type = EMOJI_TYPE.ALMOST;
+			if (guessLetter === currentWord[i]) {
+				data.type = GAME_TYPE.CORRECT;
 				data.points =
-					gameMeta.word[i] !== EMOJI_TYPE.CORRECT &&
-					gameMeta.word[i] !== EMOJI_TYPE.ALMOST
+					state.word[i].type === GAME_TYPE.CORRECT
+						? 0
+						: state.word[i].type === GAME_TYPE.ALMOST
+						? 1
+						: 2;
+
+				if (
+					state.keyboard[guessLetter] === GAME_TYPE.WRONG ||
+					state.keyboard[guessLetter] === GAME_TYPE.ALMOST
+				) {
+					state.keyboard[guessLetter] = GAME_TYPE.CORRECT;
+				}
+
+				state.word[i].type = GAME_TYPE.CORRECT;
+				currentWord[i] = '';
+			}
+
+			const almostIndex = currentWord.indexOf(guessLetter);
+			if (data.type !== GAME_TYPE.CORRECT && almostIndex !== -1) {
+				data.type = GAME_TYPE.ALMOST;
+
+				const guessedBefore = state.word.findIndex(
+					(s) =>
+						s.type === GAME_TYPE.ALMOST && s.letter === guessLetter,
+				);
+				data.points =
+					state.word[almostIndex].type === GAME_TYPE.WRONG &&
+					guessedBefore === -1
 						? 1
 						: 0;
-				currentWord[currentWord.indexOf(guessLetter)] = '';
-				gameMeta.word[i] =
-					gameMeta.word[i] === EMOJI_TYPE.CORRECT
-						? EMOJI_TYPE.CORRECT
-						: EMOJI_TYPE.ALMOST;
+
+				if (state.word[almostIndex].type === GAME_TYPE.WRONG) {
+					state.word[almostIndex].type = GAME_TYPE.ALMOST;
+				}
+
+				if (state.keyboard[guessLetter] === GAME_TYPE.WRONG) {
+					state.keyboard[guessLetter] = GAME_TYPE.ALMOST;
+				}
+
+				currentWord[almostIndex] = '';
 			}
 
 			meta[i] = data;
-			gameMeta.keyboard[guessLetter] =
-				gameMeta.keyboard[guessLetter] === EMOJI_TYPE.CORRECT
-					? EMOJI_TYPE.CORRECT
-					: data.type;
 		}
 
 		return {
 			meta,
-			gameMeta,
+			gameMeta: state,
 			guessed: correct === guess,
 			points: Object.keys(meta).reduce(
 				(pts, key) => pts + meta[key].points,
@@ -285,5 +301,16 @@ export class GameService {
 		}
 
 		return addMinutes(lastGuessWithinCooldown.createdAt, cooldown);
+	}
+
+	private _createBaseState(word: string) {
+		return {
+			keyboard: {},
+			word: [...word].map((letter, index) => ({
+				letter,
+				index,
+				type: GAME_TYPE.WRONG,
+			})),
+		};
 	}
 }
