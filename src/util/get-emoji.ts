@@ -10,6 +10,116 @@ export const GameTypeEmojiColorMap: {
 };
 
 const data = {
+	WHITE: {
+		blank: {
+			name: 'blankwhite',
+			id: '1165386149150326986',
+		},
+		a: {
+			name: 'letterAwhite',
+			id: '1165386150316347392',
+		},
+		b: {
+			name: 'letterBwhite',
+			id: '1165386152837136475',
+		},
+		c: {
+			name: 'letterCwhite',
+			id: '1165386154175115375',
+		},
+		d: {
+			name: 'letterDwhite',
+			id: '1165386156247105618',
+		},
+		e: {
+			name: 'letterEwhite',
+			id: '1165386158033866762',
+		},
+		f: {
+			name: 'letterFwhite',
+			id: '1165386160072306778',
+		},
+		g: {
+			name: 'letterGwhite',
+			id: '1165386163423543375',
+		},
+		h: {
+			name: 'letterHwhite',
+			id: '1165386165705261076',
+		},
+		i: {
+			name: 'letterIwhite',
+			id: '1165386166623805594',
+		},
+		j: {
+			name: 'letterJwhite',
+			id: '1165386168012111984',
+		},
+		l: {
+			name: 'letterLwhite',
+			id: '1165386170767777882',
+		},
+		k: {
+			name: 'letterKwhite',
+			id: '1165386196726317096',
+		},
+		m: {
+			name: 'letterMwhite',
+			id: '1165386221535625387',
+		},
+		n: {
+			name: 'letterNwhite',
+			id: '1165386223754420314',
+		},
+		o: {
+			name: 'letterOwhite',
+			id: '1165386224706531410',
+		},
+		p: {
+			name: 'letterPwhite',
+			id: '1165386226363285524',
+		},
+		q: {
+			name: 'letterQwhite',
+			id: '1165386228523356211',
+		},
+		r: {
+			name: 'letterRwhite',
+			id: '1165386229613867028',
+		},
+		s: {
+			name: 'letterSwhite',
+			id: '1165386231035732048',
+		},
+		t: {
+			name: 'letterTwhite',
+			id: '1165386431577989120',
+		},
+		u: {
+			name: 'letterUwhite',
+			id: '1165386433595453521',
+		},
+		v: {
+			name: 'letterVwhite',
+			id: '1165386434740490311',
+		},
+		w: {
+			name: 'letterWwhite',
+			id: '1165386436313354460',
+		},
+		x: {
+			name: 'letterXwhite',
+			id: '1165386438590877766',
+		},
+		y: {
+			name: 'letterYwhite',
+			id: '1165386440012730488',
+		},
+		z: {
+			name: 'letterZwhite',
+			id: '1165386442453819424',
+		},
+	},
 	GRAY: {
 		blank: {
 			name: 'blankgray',
@@ -230,114 +340,114 @@ const data = {
 			id: '1165385131402469456',
 		},
 	},
-	WHITE: {
+	YELLOW: {
 		blank: {
-			name: 'blankwhite',
-			id: '1165386149150326986',
+			name: 'blankyellow',
+			id: '1165381879512436777',
 		},
 		a: {
-			name: 'letterAwhite',
-			id: '1165386150316347392',
+			name: 'letterAyellow',
+			id: '1165381881307603074',
 		},
 		b: {
-			name: 'letterBwhite',
-			id: '1165386152837136475',
+			name: 'letterByellow',
+			id: '1165381883752882247',
 		},
 		c: {
-			name: 'letterCwhite',
-			id: '1165386154175115375',
+			name: 'letterCyellow',
+			id: '1165381884927283210',
 		},
 		d: {
-			name: 'letterDwhite',
-			id: '1165386156247105618',
+			name: 'letterDyellow',
+			id: '1165381886793744394',
 		},
 		e: {
-			name: 'letterEwhite',
-			id: '1165386158033866762',
+			name: 'letterEyellow',
+			id: '1165381888114954240',
 		},
 		f: {
-			name: 'letterFwhite',
-			id: '1165386160072306778',
+			name: 'letterFyellow',
+			id: '1165381889650081985',
 		},
 		g: {
-			name: 'letterGwhite',
-			id: '1165386163423543375',
+			name: 'letterGyellow',
+			id: '1165381892321841193',
 		},
 		h: {
-			name: 'letterHwhite',
-			id: '1165386165705261076',
+			name: 'letterHyellow',
+			id: '1165381920285282304',
 		},
 		i: {
-			name: 'letterIwhite',
-			id: '1165386166623805594',
+			name: 'letterIyellow',
+			id: '1165381922541809694',
 		},
 		j: {
-			name: 'letterJwhite',
-			id: '1165386168012111984',
-		},
-		l: {
-			name: 'letterLwhite',
-			id: '1165386170767777882',
+			name: 'letterJyellow',
+			id: '1165381923674263613',
 		},
 		k: {
-			name: 'letterKwhite',
-			id: '1165386196726317096',
+			name: 'letterKyellow',
+			id: '1165381924802527342',
+		},
+		l: {
+			name: 'letterLyellow',
+			id: '1165381926740316160',
 		},
 		m: {
-			name: 'letterMwhite',
-			id: '1165386221535625387',
+			name: 'letterMyellow',
+			id: '1165381927973425164',
 		},
 		n: {
-			name: 'letterNwhite',
-			id: '1165386223754420314',
+			name: 'letterNyellow',
+			id: '1165381952224890901',
 		},
 		o: {
-			name: 'letterOwhite',
-			id: '1165386224706531410',
+			name: 'letterOyellow',
+			id: '1165381954611458068',
 		},
 		p: {
-			name: 'letterPwhite',
-			id: '1165386226363285524',
+			name: 'letterPyellow',
+			id: '1165381955949445203',
 		},
 		q: {
-			name: 'letterQwhite',
-			id: '1165386228523356211',
+			name: 'letterQyellow',
+			id: '1165381957555859466',
 		},
 		r: {
-			name: 'letterRwhite',
-			id: '1165386229613867028',
+			name: 'letterRyellow',
+			id: '1165381960009535547',
 		},
 		s: {
-			name: 'letterSwhite',
-			id: '1165386231035732048',
+			name: 'letterSyellow',
+			id: '1165381961527873736',
 		},
 		t: {
-			name: 'letterTwhite',
-			id: '1165386431577989120',
+			name: 'letterTyellow',
+			id: '1165381963734073515',
 		},
 		u: {
-			name: 'letterUwhite',
-			id: '1165386433595453521',
+			name: 'letterUyellow',
+			id: '1165381965743140874',
 		},
 		v: {
-			name: 'letterVwhite',
-			id: '1165386434740490311',
+			name: 'letterVyellow',
+			id: '1165381991785574450',
 		},
 		w: {
-			name: 'letterWwhite',
-			id: '1165386436313354460',
+			name: 'letterWyellow',
+			id: '1165381992989335683',
 		},
 		x: {
-			name: 'letterXwhite',
-			id: '1165386438590877766',
+			name: 'letterXyellow',
+			id: '1165381995036151819',
 		},
 		y: {
-			name: 'letterYwhite',
-			id: '1165386440012730488',
+			name: 'letterYyellow',
+			id: '1165381996931993771',
 		},
 		z: {
-			name: 'letterZwhite',
-			id: '1165386442453819424',
+			name: 'letterZyellow',
+			id: '1165381999494701157',
 		},
 	},
 };
