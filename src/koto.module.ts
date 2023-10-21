@@ -15,6 +15,7 @@ import { interactionMetrics } from './metrics/interaction.metrics';
 import { userMetrics } from './metrics/user.metrics';
 import { LoggerMiddleware } from './middleware/log.middleware';
 import { AdminModule } from './modules/admin/admin.module';
+import { ExternalsModule } from './modules/externals/externals.module';
 import { GameModule } from './modules/game/game.module';
 import { GeneralModule } from './modules/general/general.module';
 import { HealthModule } from './modules/health';
@@ -59,6 +60,7 @@ import { intents } from './util/intents';
 		WordsModule,
 		GameModule,
 		AdminModule,
+		ExternalsModule,
 	],
 	providers: [
 		{
