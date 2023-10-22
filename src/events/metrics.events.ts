@@ -38,11 +38,11 @@ export class MetricsEvents {
 	}
 
 	@Once(Events.ClientReady)
-	public onReady(@Context() [client]: ContextOf<Events.ClientReady>) {
+	public async onReady(@Context() [client]: ContextOf<Events.ClientReady>) {
 		this._logger.log(`Initializing metrics`);
 
-		this._loadMembers(client);
-		this._reloadGauges(client);
+		await this._loadMembers(client);
+		await this._reloadGauges(client);
 
 		this.connected.labels('None').set(1);
 	}
