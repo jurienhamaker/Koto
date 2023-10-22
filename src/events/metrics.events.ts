@@ -41,6 +41,7 @@ export class MetricsEvents {
 	public onReady(@Context() [client]: ContextOf<Events.ClientReady>) {
 		this._logger.log(`Initializing metrics`);
 
+		this._loadMembers(client);
 		this._reloadGauges(client);
 
 		this.connected.labels('None').set(1);
@@ -131,7 +132,7 @@ export class MetricsEvents {
 
 		const totalUsers = await client.guilds.cache.reduce(
 			async (total, guild) => {
-				const members = await guild.members.fetch();
+				const members = guild.members.cache;
 				return (await total) + members.filter((m) => !m.user.bot).size;
 			},
 			Promise.resolve(0),
@@ -139,5 +140,12 @@ export class MetricsEvents {
 		this.totalUsers.set(totalUsers);
 
 		this.totalInteractions.set(this._getCommandsCount());
+	}
+
+	private async _loadMembers(client = this._client) {
+		const promises = client.guilds.cache.map((guild) =>
+			guild.members.fetch(),
+		);
+		return Promise.allSettled(promises);
 	}
 }
