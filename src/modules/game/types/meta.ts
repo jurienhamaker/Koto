@@ -21,6 +21,9 @@ export interface GameMeta {
 		letter: string;
 		type: GAME_TYPE;
 	}[];
+	pointsLeft: {
+		[key: string]: number;
+	};
 }
 
 export type GameWithMeta = Game & { meta: GameMeta };

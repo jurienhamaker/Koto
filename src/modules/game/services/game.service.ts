@@ -66,7 +66,7 @@ export class GameService {
 				guildId,
 				word,
 				endingAt: startOfHour(addHours(new Date(), settings.frequency)),
-				meta: this._createBaseState(word),
+				meta: this._createBaseState(word) as any,
 			},
 			include: {
 				guesses: true,
@@ -197,76 +197,97 @@ export class GameService {
 		});
 	}
 
-	private _checkWord(correct: string, guess: string, state: GameMeta) {
-		const meta: GameGuessMeta[] = [];
+	private _checkWord(word: string, guess: string, state: GameMeta) {
+		const meta: GameGuessMeta[] = new Array(guess.length);
+		const unmatched = {}; // unmatched word letters
 
-		const currentWord = [...correct];
+		// color matched guess letters as correct-spot,
+		// and count unmatched word letters
+		for (let i = 0; i < word.length; i++) {
+			let letter = word[i];
 
-		for (let i = 0; i < guess.length; i++) {
-			const guessLetter = guess[i];
-
-			const data = {
-				type: GAME_TYPE.WRONG,
-				points: 0,
-				letter: guessLetter,
-			};
-
-			if (!state.keyboard[guessLetter]) {
-				state.keyboard[guessLetter] = GAME_TYPE.WRONG;
-			}
-
-			if (guessLetter === currentWord[i]) {
-				data.type = GAME_TYPE.CORRECT;
-				data.points =
-					state.word[i].type === GAME_TYPE.CORRECT
+			if (letter === guess[i]) {
+				let points =
+					state.word[i].type === GAME_TYPE.CORRECT ||
+					!state.pointsLeft[letter]
 						? 0
 						: state.word[i].type === GAME_TYPE.ALMOST
 						? 1
-						: 2;
+						: state.pointsLeft[letter] >= 2
+						? 2
+						: 1;
+
+				state.pointsLeft[letter] -= points;
+
+				meta[i] = {
+					type: GAME_TYPE.CORRECT,
+					points,
+					letter: letter,
+				};
 
 				if (
-					state.keyboard[guessLetter] === GAME_TYPE.WRONG ||
-					state.keyboard[guessLetter] === GAME_TYPE.ALMOST
+					!state.keyboard[letter] ||
+					state.keyboard[letter] !== GAME_TYPE.CORRECT
 				) {
-					state.keyboard[guessLetter] = GAME_TYPE.CORRECT;
+					state.keyboard[letter] = GAME_TYPE.CORRECT;
 				}
 
 				state.word[i].type = GAME_TYPE.CORRECT;
-				currentWord[i] = '';
+				continue;
 			}
 
-			const almostIndex = currentWord.indexOf(guessLetter);
-			if (data.type !== GAME_TYPE.CORRECT && almostIndex !== -1) {
-				data.type = GAME_TYPE.ALMOST;
+			unmatched[letter] = (unmatched[letter] || 0) + 1;
+		}
 
-				const guessedBefore = state.word.findIndex(
-					(s) =>
-						s.type === GAME_TYPE.ALMOST && s.letter === guessLetter,
-				);
-				data.points =
-					state.word[almostIndex].type === GAME_TYPE.WRONG &&
-					guessedBefore === -1
-						? 1
-						: 0;
+		// color unmatched guess letters right-to-left,
+		// allocating remaining word letters as wrong-spot,
+		// otherwise, as not-any-spot
+		for (let i = 0; i < word.length; i++) {
+			let letter = guess[i];
+			if (letter !== word[i]) {
+				if (unmatched[letter]) {
+					let points =
+						state.word[i].type === GAME_TYPE.CORRECT ||
+						state.pointsLeft[letter] < 2 || // if it's lower than 2 (either 0 or 1) it has already been "almost" before
+						state.word[i].type === GAME_TYPE.ALMOST
+							? 0
+							: 1;
 
-				if (state.word[almostIndex].type === GAME_TYPE.WRONG) {
-					state.word[almostIndex].type = GAME_TYPE.ALMOST;
+					state.pointsLeft[letter] -= points;
+
+					meta[i] = {
+						type: GAME_TYPE.ALMOST,
+						points,
+						letter: letter,
+					};
+					unmatched[letter]--;
+
+					if (
+						!state.keyboard[letter] ||
+						state.keyboard[letter] !== GAME_TYPE.CORRECT
+					) {
+						state.keyboard[letter] = GAME_TYPE.ALMOST;
+					}
+
+					continue;
 				}
 
-				if (state.keyboard[guessLetter] === GAME_TYPE.WRONG) {
-					state.keyboard[guessLetter] = GAME_TYPE.ALMOST;
-				}
+				meta[i] = {
+					type: GAME_TYPE.WRONG,
+					points: 0,
+					letter: letter,
+				};
 
-				currentWord[almostIndex] = '';
+				if (!state.keyboard[letter]) {
+					state.keyboard[letter] = GAME_TYPE.WRONG;
+				}
 			}
-
-			meta[i] = data;
 		}
 
 		return {
 			meta,
 			gameMeta: state,
-			guessed: correct === guess,
+			guessed: word === guess,
 			points: Object.keys(meta).reduce(
 				(pts, key) => pts + meta[key].points,
 				0,
@@ -303,7 +324,7 @@ export class GameService {
 		return addMinutes(lastGuessWithinCooldown.createdAt, cooldown);
 	}
 
-	private _createBaseState(word: string) {
+	private _createBaseState(word: string): GameMeta {
 		return {
 			keyboard: {},
 			word: [...word].map((letter, index) => ({
@@ -311,6 +332,15 @@ export class GameService {
 				index,
 				type: GAME_TYPE.WRONG,
 			})),
+			pointsLeft: [...word].reduce((pointsLeft, letter) => {
+				if (!pointsLeft[letter]) {
+					pointsLeft[letter] = 0;
+				}
+
+				pointsLeft[letter] += 2;
+
+				return pointsLeft;
+			}, {}),
 		};
 	}
 }
