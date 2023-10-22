@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Client, Events } from 'discord.js';
-import { Once } from 'necord';
+import { CommandsService, Once } from 'necord';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
@@ -12,6 +12,7 @@ export class DiscordBotListService {
 	constructor(
 		private _client: Client,
 		private _http: HttpService,
+		private _commands: CommandsService,
 	) {}
 
 	@Once(Events.ClientReady)
@@ -55,18 +56,24 @@ export class DiscordBotListService {
 			process.env.DISCORDBOTLIST_TOKEN &&
 			process.env.NODE_ENV === 'production'
 		) {
-			const commands = [
-				...this._client.application.commands.cache.values(),
-			].map((command) => ({
-				name: command.name,
-				description: command.description,
-				type: command.type,
-			}));
+			const commands = this._commands.getCommands();
+
+			const data = [];
+			for (let command of commands) {
+				if (command.isSlashCommand()) {
+					data.push({
+						name: command.getName(),
+						description: command.getDescription(),
+						type: 1,
+					});
+					continue;
+				}
+			}
 
 			await lastValueFrom(
 				this._http.post(
 					`https://discordbotlist.com/api/v1/bots/${process.env.CLIENT_ID}/commands`,
-					commands,
+					data,
 					{
 						headers: {
 							Authorization: process.env.DISCORDBOTLIST_TOKEN,
@@ -80,7 +87,9 @@ export class DiscordBotListService {
 				),
 			);
 
-			this._logger.log(`Updated DiscordBotList commands`);
+			this._logger.log(
+				`Updated DiscordBotList with ${data.length} commands`,
+			);
 		}
 	}
 }

@@ -331,13 +331,13 @@ const data = {
 			name: 'letterXgreen',
 			id: '1165382180353081374',
 		},
-		z: {
-			name: 'letterZgreen',
-			id: '1165382183389757500',
-		},
 		y: {
 			name: 'letterYgreen',
 			id: '1165385131402469456',
+		},
+		z: {
+			name: 'letterZgreen',
+			id: '1165382183389757500',
 		},
 	},
 	YELLOW: {
