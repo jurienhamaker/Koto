@@ -9,6 +9,7 @@ import { BotsGGService } from './services/bots-gg.service';
 import { DiscordBotListService } from './services/discordbotlist.service';
 import { DiscordsService } from './services/discords.service';
 import { TopGGService } from './services/top-gg.service';
+import { ExternalsVoteService } from './services/vote.service';
 
 @Module({
 	imports: [SharedModule, HttpModule],
@@ -19,6 +20,7 @@ import { TopGGService } from './services/top-gg.service';
 		BotsGGController,
 	],
 	providers: [
+		ExternalsVoteService,
 		TopGGService,
 		DiscordsService,
 		DiscordBotListService,

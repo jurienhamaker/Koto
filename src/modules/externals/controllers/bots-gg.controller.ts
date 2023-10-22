@@ -1,8 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Post } from '@nestjs/common';
 
 @Controller('bots-gg')
 export class BotsGGController {
-	@Get('/webhook')
+	@Post('/webhook')
 	webhook() {
 		return {
 			status: 'OK',
