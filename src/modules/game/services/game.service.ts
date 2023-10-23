@@ -200,24 +200,29 @@ export class GameService {
 	private _checkWord(word: string, guess: string, state: GameMeta) {
 		const meta: GameGuessMeta[] = new Array(guess.length);
 		const unmatched = {}; // unmatched word letters
+		const letterCount = {};
 
 		// color matched guess letters as correct-spot,
 		// and count unmatched word letters
 		for (let i = 0; i < word.length; i++) {
 			let letter = word[i];
-
 			if (letter === guess[i]) {
-				let points =
-					state.word[i].type === GAME_TYPE.CORRECT ||
-					!state.pointsLeft[letter]
-						? 0
-						: state.word[i].type === GAME_TYPE.ALMOST
-						? 1
-						: state.pointsLeft[letter] >= 2
-						? 2
-						: 1;
+				letterCount[letter] = (letterCount[letter] || 0) + 1;
 
-				state.pointsLeft[letter] -= points;
+				let points = 0;
+
+				if (state.discovery.correct[letter] < letterCount[letter]) {
+					points = 2;
+					state.discovery.correct[letter] += 1;
+
+					if (state.discovery.almost[letter] >= letterCount[letter]) {
+						points = 1;
+					}
+				}
+
+				if (state.discovery.almost[letter] < letterCount[letter]) {
+					state.discovery.almost[letter] += 1;
+				}
 
 				meta[i] = {
 					type: GAME_TYPE.CORRECT,
@@ -246,14 +251,14 @@ export class GameService {
 			let letter = guess[i];
 			if (letter !== word[i]) {
 				if (unmatched[letter]) {
-					let points =
-						state.word[i].type === GAME_TYPE.CORRECT ||
-						state.pointsLeft[letter] < 2 || // if it's lower than 2 (either 0 or 1) it has already been "almost" before
-						state.word[i].type === GAME_TYPE.ALMOST
-							? 0
-							: 1;
+					letterCount[letter] = (letterCount[letter] || 0) + 1;
 
-					state.pointsLeft[letter] -= points;
+					let points = 0;
+
+					if (state.discovery.almost[letter] < letterCount[letter]) {
+						points = 1;
+						state.discovery.almost[letter] += 1;
+					}
 
 					meta[i] = {
 						type: GAME_TYPE.ALMOST,
@@ -332,15 +337,18 @@ export class GameService {
 				index,
 				type: GAME_TYPE.WRONG,
 			})),
-			pointsLeft: [...word].reduce((pointsLeft, letter) => {
-				if (!pointsLeft[letter]) {
-					pointsLeft[letter] = 0;
-				}
+			discovery: [...word].reduce(
+				(data, letter) => {
+					data.almost[letter] = 0;
+					data.correct[letter] = 0;
 
-				pointsLeft[letter] += 2;
-
-				return pointsLeft;
-			}, {}),
+					return data;
+				},
+				{
+					almost: {},
+					correct: {},
+				},
+			),
 		};
 	}
 }

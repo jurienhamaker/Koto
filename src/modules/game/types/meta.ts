@@ -21,8 +21,13 @@ export interface GameMeta {
 		letter: string;
 		type: GAME_TYPE;
 	}[];
-	pointsLeft: {
-		[key: string]: number;
+	discovery: {
+		almost: {
+			[key: string]: number;
+		};
+		correct: {
+			[key: string]: number;
+		};
 	};
 }
 
