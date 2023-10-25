@@ -31,7 +31,7 @@ import { intents } from './util/intents';
 				process.env.NODE_ENV !== 'production'
 					? process.env.DEVELOPMENT_SERVER_IDS!.split(',')
 					: false,
-			skipRegistration: process.env.REGISTER_COMMANDS === 'false',
+			skipRegistration: process.env.REGISTER_COMMANDS !== 'false',
 			token: process.env.DISCORD_TOKEN!,
 			intents,
 		}),
