@@ -16,7 +16,12 @@ export class LogsInteractionEvents {
 		@Context() [interaction]: ContextOf<Events.InteractionCreate>,
 	) {
 		const commandName = getInteractionCommandName(interaction);
-		this._logs.log(
+
+		if (commandName.indexOf('admin') >= 0) {
+			return;
+		}
+
+		return this._logs.log(
 			`Interaction **${commandName}** (${
 				interaction.constructor.name
 			}) used by **${getUsername(interaction.user)}** (${

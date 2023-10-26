@@ -10,9 +10,7 @@ export class LogsGuildEvents {
 	constructor(private _logs: LogsService) {}
 
 	@On(Events.GuildCreate)
-	public async onGuildCreate(
-		@Context() [guild]: ContextOf<Events.GuildCreate>,
-	) {
+	public onGuildCreate(@Context() [guild]: ContextOf<Events.GuildCreate>) {
 		return this._logs.log(
 			`🎉 Joined guild **${guild.name}** | ${guild.id}`,
 		);
