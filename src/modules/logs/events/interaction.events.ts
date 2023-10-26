@@ -1,7 +1,7 @@
 import { getInteractionCommandName } from '@koto/util/get-interaction-command-name';
 import { getUsername } from '@koto/util/get-username';
 import { Injectable, Logger } from '@nestjs/common';
-import { Events } from 'discord.js';
+import { ChatInputCommandInteraction, Events } from 'discord.js';
 import { Context, ContextOf, On } from 'necord';
 import { LogsService } from '../services/logs.service';
 
@@ -21,12 +21,16 @@ export class LogsInteractionEvents {
 			return;
 		}
 
+		if (!(interaction instanceof ChatInputCommandInteraction)) {
+			return;
+		}
+
 		return this._logs.log(
-			`Interaction **${commandName}** (${
-				interaction.constructor.name
-			}) used by **${getUsername(interaction.user)}** (${
-				interaction.user.id
-			}) in **${interaction.guild.name}** (${interaction.guildId})!`,
+			`Command **${commandName}** used by **${getUsername(
+				interaction.user,
+			)}** (${interaction.user.id}) in **${interaction.guild.name}** (${
+				interaction.guildId
+			})!`,
 		);
 	}
 }
