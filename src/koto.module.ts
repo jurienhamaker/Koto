@@ -19,6 +19,7 @@ import { ExternalsModule } from './modules/externals/externals.module';
 import { GameModule } from './modules/game/game.module';
 import { GeneralModule } from './modules/general/general.module';
 import { HealthModule } from './modules/health';
+import { LogsModule } from './modules/logs/logs.module';
 import { SettingsModule } from './modules/settings';
 import { WordsModule } from './modules/words/words.module';
 import { SharedModule } from './shared.module';
@@ -29,7 +30,7 @@ import { intents } from './util/intents';
 		NecordModule.forRoot({
 			development:
 				process.env.NODE_ENV !== 'production'
-					? process.env.DEVELOPMENT_SERVER_IDS!.split(',')
+					? [process.env.DEVELOPMENT_SERVER_ID]
 					: false,
 			skipRegistration: process.env.REGISTER_COMMANDS === 'false',
 			token: process.env.DISCORD_TOKEN!,
@@ -61,6 +62,7 @@ import { intents } from './util/intents';
 		GameModule,
 		AdminModule,
 		ExternalsModule,
+		LogsModule,
 	],
 	providers: [
 		{

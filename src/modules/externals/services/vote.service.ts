@@ -19,7 +19,7 @@ export class ExternalsVoteService {
 		userId: string,
 	) {
 		const guild = await this._client.guilds.fetch(
-			process.env.VOTE_REPORT_GUILD_ID,
+			process.env.DEVELOPMENT_SERVER_ID,
 		);
 		if (!guild) {
 			return false;
