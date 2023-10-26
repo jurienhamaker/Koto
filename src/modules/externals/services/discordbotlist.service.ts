@@ -61,6 +61,10 @@ export class DiscordBotListService {
 			const data = [];
 			for (let command of commands) {
 				if (command.isSlashCommand()) {
+					if (command.getName() === 'admin') {
+						continue;
+					}
+
 					data.push({
 						name: command.getName(),
 						description: command.getDescription(),
