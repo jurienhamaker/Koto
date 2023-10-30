@@ -42,20 +42,20 @@ Please use any of the links below to vote for Koto!
 			);
 		}
 
-		if (process.env.DISCORDS_VOTE_LINK?.length) {
-			buttons.push(
-				new ButtonBuilder()
-					.setURL(process.env.DISCORDS_VOTE_LINK)
-					.setLabel('Vote on Discords')
-					.setStyle(ButtonStyle.Link),
-			);
-		}
-
 		if (process.env.DISCORDBOTLIST_VOTE_LINK?.length) {
 			buttons.push(
 				new ButtonBuilder()
 					.setURL(process.env.DISCORDBOTLIST_VOTE_LINK)
 					.setLabel('Vote on Discord Bot List')
+					.setStyle(ButtonStyle.Link),
+			);
+		}
+
+		if (process.env.DISCORDS_VOTE_LINK?.length) {
+			buttons.push(
+				new ButtonBuilder()
+					.setURL(process.env.DISCORDS_VOTE_LINK)
+					.setLabel('Vote on Discords')
 					.setStyle(ButtonStyle.Link),
 			);
 		}
