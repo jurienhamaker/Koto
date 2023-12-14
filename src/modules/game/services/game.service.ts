@@ -40,7 +40,7 @@ export class GameService {
 			await this.endGame(currentGame.id, GameStatus.FAILED);
 		}
 
-		const pastTenGames = await this._prisma.game.findMany({
+		const pastFiftyGames = await this._prisma.game.findMany({
 			where: {
 				guildId,
 			},
@@ -50,10 +50,10 @@ export class GameService {
 			orderBy: {
 				createdAt: 'desc',
 			},
-			take: 10,
+			take: 50,
 		});
 
-		const ignoredWords = pastTenGames.map((g) => g.word);
+		const ignoredWords = pastFiftyGames.map((g) => g.word);
 		word = word ?? this._words.getRandom(ignoredWords);
 
 		if (!word) {

@@ -7,6 +7,7 @@ export class WordsService {
 	private readonly _logger = new Logger(WordsService.name);
 
 	private _wordsByLetter: Map<string, string[]>;
+	private _cumulativeLetterWeights: Array<number> = [];
 	private _existsByLetter: Map<string, string[]>;
 
 	public amount: number = 0;
@@ -42,6 +43,10 @@ export class WordsService {
 
 		const filteredWords = words.filter((w) => ignored.indexOf(w) === -1);
 
+		if (!filteredWords.length) {
+			return this.getRandom(ignored, hard);
+		}
+
 		const randomIndex = Math.floor(Math.random() * filteredWords.length);
 		return filteredWords[randomIndex];
 	}
@@ -55,6 +60,16 @@ export class WordsService {
 			m
 		))(new Map(), words);
 
+		const letterSizes = [...this._wordsByLetter.keys()].map(
+			(key) => this._wordsByLetter.get(key).length,
+		);
+
+		this._cumulativeLetterWeights = [];
+		for (let i = 0; i < letterSizes.length; i += 1) {
+			this._cumulativeLetterWeights[i] =
+				letterSizes[i] + (this._cumulativeLetterWeights[i - 1] || 0);
+		}
+
 		this._existsByLetter = ((m, a) => (
 			a.forEach((s) => {
 				let a = m.get(s[0]) || [];
@@ -65,9 +80,17 @@ export class WordsService {
 	}
 
 	private _randomLetter() {
-		const characters = 'abcdefghijklmnopqrstuvwyz'; // no x cause  we don't have any words that start with x
-		const randomIndex = Math.floor(Math.random() * characters.length);
+		const maxCumulativeWeight =
+			this._cumulativeLetterWeights[
+				this._cumulativeLetterWeights.length - 1
+			];
+		const randomNumber = maxCumulativeWeight * Math.random();
+		const letters = [...this._wordsByLetter.keys()];
 
-		return characters[randomIndex];
+		const index = this._cumulativeLetterWeights.findIndex(
+			(v) => v >= randomNumber,
+		);
+
+		return letters[index];
 	}
 }
