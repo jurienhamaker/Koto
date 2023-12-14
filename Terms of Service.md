@@ -4,6 +4,7 @@
 [discord]: https://discord.com
 [support]: https://discord.gg/UttZbEd9zn
 [language]: https://discord.com/developers/docs/dispatch/field-values#predefined-field-values-accepted-locales
+[Policy]: https://github.com/jurienhamaker/Koto/blob/main/Privacy%20Policy.md
 
 ## Terms of Service
 
@@ -13,7 +14,7 @@ By inviting the bot and using its features (commands, welcome system) are you ag
 
 You acknowledge that you have the priviledge to use the bot freely on any Discord Server (Server) you share with it, that you can invite it to any Server that you have "Manage Server" rights for and that this priviledge might get revoked for you, if you're subject of breaking the terms and/or policy of this bot, or the [Terms of Service], [Privacy Policy] and/or [Community Guidelines] of [Discord Inc][discord].
 
-Through Inviting the bot may it collect specific data as described in its [Policy](https://github.com/jurienhamaker/Koto/blob/main/Privacy%20Policy.md).  
+Through Inviting the bot may it collect specific data as described in its [Policy].  
 The intended usage of this data is for core functionalities of the bot such as command handling, guild-specific settings and the Points System.
 
 ### Intended Age
